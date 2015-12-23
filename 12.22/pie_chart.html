@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My d3 demo</title>
+	<script type="text/javascript" src = "node_modules/d3/d3.js">
+	</script>
+</head>
+<style>
+.axis path,
+.axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+.MyRect{
+	fill:steelblue;
+}
+.MyText{
+	fill:white;
+	text-anchor:middle;
+}
+</style>
+<body>
+	
+	<script>
+		var width = 400;
+		var height = 400;
+		var dataset = [ 30 , 10 , 43 , 55 , 13 ];
+		
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+		
+		var pie = d3.layout.pie();
+
+		var piedata = pie(dataset);
+		
+		var outerRadius = 150;	//外半径
+		var innerRadius = 50;	//内半径，为0则中间没有空白
+
+		var arc = d3.svg.arc()	//弧生成器 
+					.innerRadius(innerRadius)	//设置内半径
+					.outerRadius(outerRadius);	//设置外半径
+		
+		var color = d3.scale.category10();
+		
+		var arcs = svg.selectAll("g")
+					  .data(piedata)
+					  .enter()
+					  .append("g")
+					  .attr("transform","translate("+ (width/2) +","+ (width/2) +")");
+					  
+		arcs.append("path")
+			.attr("fill",function(d,i){
+				return color(i);
+			})
+			.attr("d",function(d){
+				return arc(d);
+			});
+			//因为 arcs 是同时选择了 5 个 g 元素的选择集，所以调用 append(“path”) 后，每个 g 中都有 path 。路径值的属性名称是 d，调用弧生成器后返回的值赋值给它。要注意，arc(d) 的参数 d 是被绑定的数据。
+		
+		arcs.append("text")
+			.attr("transform",function(d){
+				return "translate(" + arc.centroid(d) + ")";
+			})
+			.attr("text-anchor","middle")
+			.text(function(d){
+				return d.data;
+			});
+			//arc.centroid(d) 能算出弧线的中心。要注意，text() 里返回的是 d.data ，而不是 d 。因为被绑定的数据是对象，里面有 d.startAngle、d.endAngle、d.data 等，其中 d.data 才是转换前的整数的值
+
+	</script>
+
+</body>
+</html>

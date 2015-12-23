@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My d3 demo</title>
+	<script type="text/javascript" src = "node_modules/d3/d3.js">
+	</script>
+</head>
+<style>
+.axis path,
+.axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+.MyRect{
+	fill:steelblue;
+}
+.MyText{
+	fill:white;
+	text-anchor:middle;
+}
+</style>
+<body>
+	
+	<script>
+		
+		var width = 800;
+		var height = 800;
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width",width)
+			.attr("height",height);
+
+		var circle1 = svg.append("circle")
+					.attr("cx",100)
+					.attr("cy",100)
+					.attr("r",45)
+					.style("fill","green")
+
+		circle1.transition().duration(1000).attr("cx",300);
+
+		var circle2 = svg.append("circle")
+					.attr("cx",100)
+					.attr("cy",100)
+					.attr("r",45)
+					.style("fill","green")
+
+		circle2.transition().duration(1500).attr("cx",700).style("fill","red");
+
+		var circle3 = svg.append("circle")
+					.attr("cx",100)
+					.attr("cy",100)
+					.attr("r",45)
+					.style("fill","green")
+
+		circle3.transition().duration(2000).ease("bounce").attr("cx",500),style("fill","blue").attr("r",25);
+
+	</script>
+
+</body>
+</html>

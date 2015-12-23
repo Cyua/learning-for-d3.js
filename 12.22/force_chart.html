@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My d3 demo</title>
+	<script type="text/javascript" src = "node_modules/d3/d3.js">
+	</script>
+</head>
+<style>
+.axis path,
+.axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+.MyRect{
+	fill:steelblue;
+}
+.MyText{
+	fill:white;
+	text-anchor:middle;
+}
+</style>
+<body>
+	
+	<script>
+		var nodes = [
+    {"name":"Myriel","group":3},
+    {"name":"Napoleon","group":1},
+    {"name":"Mlle.Baptistine","group":1},
+    {"name":"Mme.Magloire","group":1},
+    {"name":"CountessdeLo","group":1},
+    {"name":"Geborand","group":1},
+    {"name":"Champtercier","group":1},
+    {"name":"Cravatte","group":1},
+    {"name":"Count","group":1},
+    {"name":"OldMan","group":1},
+    {"name":"Labarre","group":2},
+    {"name":"Valjean","group":2},
+    {"name":"Marguerite","group":3},
+    {"name":"Mme.deR","group":2},
+    {"name":"Isabeau","group":2},
+    {"name":"Gervais","group":2},
+    {"name":"Tholomyes","group":3},
+    {"name":"Listolier","group":3},
+    {"name":"Fameuil","group":3},
+    {"name":"Blacheville","group":3},
+    {"name":"Favourite","group":3},
+    {"name":"Dahlia","group":3}
+  ];
+					 
+		var edges = [
+    {"source":1,"target":0,"value":1},
+    {"source":2,"target":0,"value":8},
+    {"source":3,"target":0,"value":10},
+    {"source":3,"target":2,"value":6},
+    {"source":4,"target":0,"value":1},
+    {"source":5,"target":0,"value":1},
+    {"source":6,"target":0,"value":1},
+    {"source":7,"target":0,"value":1},
+    {"source":8,"target":0,"value":2},
+    {"source":9,"target":0,"value":1},
+    {"source":11,"target":1,"value":1},
+    {"source":11,"target":3,"value":3},
+    {"source":11,"target":2,"value":3},
+    {"source":11,"target":0,"value":5},
+    {"source":12,"target":2,"value":1},
+    {"source":13,"target":2,"value":1},
+    {"source":14,"target":2,"value":1},
+    {"source":15,"target":2,"value":1},
+    {"source":17,"target":3,"value":4},
+    {"source":18,"target":3,"value":4},
+    {"source":18,"target":3,"value":4},
+    {"source":19,"target":3,"value":4},
+    {"source":19,"target":2,"value":4},
+    {"source":19,"target":3,"value":4},
+    {"source":20,"target":4,"value":3},
+    {"source":20,"target":1,"value":3},
+    {"source":20,"target":2,"value":3},
+    {"source":20,"target":3,"value":4},
+    {"source":21,"target":16,"value":3},
+    {"source":21,"target":17,"value":3},
+    {"source":21,"target":18,"value":3},
+    {"source":21,"target":19,"value":3},
+    {"source":21,"target":20,"value":5}
+  ]
+		
+		var width = 800;
+		var height = 800;
+		
+		
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width",width)
+					.attr("height",height);
+		
+		var force = d3.layout.force()
+				.nodes(nodes)		//指定节点数组
+				.links(edges)		//指定连线数组
+				.size([width,height])	//指定范围
+				.linkDistance(150)	//指定连线长度
+				.charge([-800]);	//相互之间的作用力
+
+		force.start();	//开始作用
+		
+		//添加连线		
+		var svg_edges = svg.selectAll("line")
+							.data(edges)
+							.enter()
+							.append("line")
+							.style("stroke","#ccc")
+							.style("stroke-width",1);
+		
+		var color = d3.scale.category20();
+				
+		//添加节点			
+		var svg_nodes = svg.selectAll("circle")
+							.data(nodes)
+							.enter()
+							.append("circle")
+							.attr("r",20)
+							.style("fill",function(d,i){
+								return color(i);
+							})
+							.call(force.drag);	//使得节点能够拖动
+
+		//添加描述节点的文字
+		var svg_texts = svg.selectAll("text")
+							.data(nodes)
+							.enter()
+							.append("text")
+							.style("fill", "black")
+							.attr("dx", 20)
+							.attr("dy", 8)
+							.text(function(d){
+								return d.name;
+							});
+					
+
+		force.on("tick", function(){	//对于每一个时间间隔
+		
+			 //更新连线坐标
+			 svg_edges.attr("x1",function(d){ return d.source.x; })
+			 		.attr("y1",function(d){ return d.source.y; })
+			 		.attr("x2",function(d){ return d.target.x; })
+			 		.attr("y2",function(d){ return d.target.y; });
+			 
+			 //更新节点坐标
+			 svg_nodes.attr("cx",function(d){ return d.x; })
+			 		.attr("cy",function(d){ return d.y; });
+
+			 //更新文字坐标
+			 svg_texts.attr("x", function(d){ return d.x; })
+			 	.attr("y", function(d){ return d.y; });
+		});
+
+	</script>
+
+</body>
+</html>
